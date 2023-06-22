@@ -1,0 +1,49 @@
+#Creating a working directory
+import os
+os.getcwd()
+'C:\\Users\\USER'
+#Changing working directory
+os.chdir("C:\\Users\\USER\\OneDrive\\Desktop\\MSC\\Python data")
+os.getcwd()
+'C:\\Users\\USER\\OneDrive\\Desktop\\MSC\\Python data'
+#Things to install
+#numpy - !pip install numpy
+#pandas - !pip install pandas
+#plotly - !pip install plotly
+#things to import
+import numpy as np
+import pandas as pd
+import plotly
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+#import dataset
+#importing the data set
+df=pd.read_excel("Test 2_Set 1 (1).xlsx")
+df.head()
+Region	State	Year	fish_production	milk_production	egg_production	grain_storage_capacity	rice_production	coarce_cereals_production	pulses_production	wheat_production	per_hectre_fertilizer_consumption	per_capita_sgdp	bank_credit	wage_category	lengh of roads	power requirement	power_availability
+0	South Zone	Andhra Pradesh	2013	18.08	12762	222974	91.30	6862.4	2433.6	1132.7	1.0	199.7	68865	96300	Medium	238001	9969	8217
+1	South Zone	Andhra Pradesh	2014	20.18	13007	227875	68.47	6969.7	2486.8	1061.8	4.0	220.1	72254	118200	Medium	256448	9566	8904
+2	South Zone	Andhra Pradesh	2015	19.79	9656	130958	27.36	7233.9	2310.2	950.0	0.0	237.2	79174	78200	Medium	261657	0	0
+3	South Zone	Andhra Pradesh	2016	23.52	10817	141743	24.02	7488.7	1916.0	1229.0	0.0	225.7	88609	82100	Medium	178096	5044	5037
+4	South Zone	Andhra Pradesh	2017	27.66	12178	158274	28.79	7452.4	1982.0	931.0	0.0	186.3	94115	89800	Medium	179022	5430	5426
+#1st graph is a scatter plot
+a= px.scatter(df,x= "State",y="fish_production",title="scatter for fish production")
+a.show()
+#Figure 2
+b= px.scatter(df,x= "State",y="fish_production",hover_name="Year",size ="fish_production",symbol="Year",color="wage_category",title="scatter for fish production")
+b.show()
+#Figure 3
+graphb=px.scatter(df, x="State", y="fish_production", hover_name="Year", size="fish_production", 
+                  symbol="Year", color="wage_category",title="Scatter for Fish production")
+graphb.update_layout(xaxis_title="State", yaxis_title="Fish production", font_family="forte", font_color="teal")
+graphb.show()
+graph2=px.scatter(df, x="State", y="fish_production", hover_name="Year", size="fish_production", 
+                  symbol="Year", color="wage_category",animation_frame="Year", title="scatter for Fish production")
+graph2.update_layout(xaxis_title="State", yaxis_title="Fish production", font_family="forte", font_color="darkblue")
+graph2.show()
+ 
+fig3= px.scatter(df.query("Year==2013"), x="State", y="fish_production",
+	         size="fish_production", color="wage_category",title = "Bubble plot fish production",
+                 hover_name="Year", log_x=True, size_max=60)
+fig3.show()
