@@ -1,0 +1,138 @@
+import os
+os.getcwd()
+os.chdir("F:\Python Scripts\AdvPlots")
+pip install wordcloud
+Collecting wordcloud
+  Downloading wordcloud-1.9.1.1-cp39-cp39-win_amd64.whl (153 kB)
+     ------------------------------------ 153.3/153.3 kB 761.0 kB/s eta 0:00:00
+Requirement already satisfied: numpy>=1.6.1 in f:\python\lib\site-packages (from wordcloud) (1.21.5)
+Requirement already satisfied: pillow in f:\python\lib\site-packages (from wordcloud) (9.2.0)
+Requirement already satisfied: matplotlib in f:\python\lib\site-packages (from wordcloud) (3.5.2)
+Requirement already satisfied: kiwisolver>=1.0.1 in f:\python\lib\site-packages (from matplotlib->wordcloud) (1.4.2)
+Requirement already satisfied: fonttools>=4.22.0 in f:\python\lib\site-packages (from matplotlib->wordcloud) (4.25.0)
+Requirement already satisfied: cycler>=0.10 in f:\python\lib\site-packages (from matplotlib->wordcloud) (0.11.0)
+Requirement already satisfied: packaging>=20.0 in f:\python\lib\site-packages (from matplotlib->wordcloud) (21.3)
+Requirement already satisfied: python-dateutil>=2.7 in f:\python\lib\site-packages (from matplotlib->wordcloud) (2.8.2)
+Requirement already satisfied: pyparsing>=2.2.1 in f:\python\lib\site-packages (from matplotlib->wordcloud) (3.0.9)
+Requirement already satisfied: six>=1.5 in f:\python\lib\site-packages (from python-dateutil>=2.7->matplotlib->wordcloud) (1.16.0)
+Installing collected packages: wordcloud
+Successfully installed wordcloud-1.9.1.1
+Note: you may need to restart the kernel to use updated packages.
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+word = ("apples,oranges,strawberries,kiwi,dragonfruit,guava,fig,plum,avocado,pomegranate,cherry,peach,pears,oranges,mango,apples,grapes,mango,raspberries,blueberries,mango,strawberries,strawberries,pineapple,apricot,apricot,watermelon")
+wordcloud= WordCloud(width=2044,height=1600, background_color="lightpink").generate(word)
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.margins(x=0,y=0)
+plt.show()
+
+#2
+
+import requests
+import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
+from wordcloud import WordCloud
+#get html of webpage
+link="https://en.wikipedia.org/wiki/DC_Comics"
+response = requests.get(link)
+soup= BeautifulSoup(response.content, "html.parser")
+
+#get text from webpage
+text=soup.get_text()
+
+wc=WordCloud()
+wc.generate(text)
+
+plt.imshow(wc)
+plt.axis("off")
+plt.show()
+
+#3.Map
+
+import pandas as pd
+df = pd.read_csv("SDG.csv")
+df
+state	sdg score
+0	Andaman & Nicobar	67
+1	Andhra Pradesh	72
+2	Arunachal Pradesh	60
+3	Assam	57
+4	Bihar	52
+5	Chandigarh	79
+6	Chhattisgarh	61
+7	Dadra and Nagar Haveli	62
+8	Delhi	68
+9	Goa	72
+10	Gujarat	69
+11	Haryana	68
+12	Himachal Pradesh	74
+13	Jammu & Kashmir	66
+14	Jharkhand	56
+15	Karnataka	72
+16	Kerala	75
+17	Ladakh	66
+18	Madhya Pradesh	62
+19	Maharashtra	70
+20	Manipur	64
+21	Meghalaya	60
+22	Mizoram	68
+23	Nagaland	61
+24	Odisha	61
+25	Puducherry	68
+26	Punjab	68
+27	Rajasthan	60
+28	Sikkim	71
+29	Tamil Nadu	74
+30	Telangana	69
+31	Tripura	65
+32	Uttarakhand	72
+33	Uttar Pradesh	60
+34	West Bengal	62
+import pandas as pd
+import plotly.express as px
+import plotly
+import json
+import requests
+fig = px.choropleth(
+    df,
+    geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
+    featureidkey= 'properties.ST_NM',
+    locations='state',
+    color='sdg score',
+    color_continuous_scale='armyrose'
+)
+
+fig.update_geos(fitbounds="locations",visible=False)
+fig.show()
+#save the ma
+
+pip install kaleido
+  File "C:\Users\Poumi\AppData\Local\Temp\ipykernel_8488\1830631372.py", line 3
+    pip install kaleido
+        ^
+SyntaxError: invalid syntax
+#Sunburst
+
+import pandas as pd
+df1 = pd.read_excel("city_pop.xlsx")
+df1
+City	State	Population	Literacy	Sex Ratio
+0	Mumbai	Maharashtra	12442373	0.8973	853
+1	Delhi	Delhi	16787941	0.8620	868
+2	Bangalore	Karnataka	8443675	0.8871	923
+3	Hyderabad	Telangana	6731790	0.8326	955
+4	Ahmedabad	Gujarat	5577940	0.8962	898
+...	...	...	...	...	...
+94	Malegoan	Maharashtra	471312	0.8761	973
+95	Gaya	Bihar	468614	0.8163	896
+96	Jalgaon	Maharashtra	460228	0.8728	913
+97	Udaipur	Rajasthan	451100	0.8966	928
+98	Maheshtala	West Bengal	448317	0.8203	952
+99 rows × 5 columns
+
+import plotly.express as px
+fig = px.sunburst(df1,path=['State','City'], values='Population')
+fig.show()
