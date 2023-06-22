@@ -1,0 +1,338 @@
+import os
+os.getcwd()
+'C:\\Users\\USER'
+#changing working directory 
+os.chdir("C:\\Users\\USER\\OneDrive\\Desktop\\MSC\\Python data") 
+os.getcwd()
+'C:\\Users\\USER\\OneDrive\\Desktop\\MSC\\Python data'
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+#pip install statsmodels
+import statsmodels.api as sm
+from sklearn import linear_model
+df=pd.read_csv("petrol_consumption.csv")
+df.head()
+Petrol_tax	Average_income	Paved_Highways	Population_Driver_licence(%)	Petrol_Consumption
+0	9.0	3571	1976	0.525	541
+1	9.0	4092	1250	0.572	524
+2	9.0	3865	1586	0.580	561
+3	7.5	4870	2351	0.529	414
+4	8.0	4399	431	0.544	410
+df.describe()
+Petrol_tax	Average_income	Paved_Highways	Population_Driver_licence(%)	Petrol_Consumption
+count	48.000000	48.000000	48.000000	48.000000	48.000000
+mean	7.668333	4241.833333	5565.416667	0.570333	576.770833
+std	0.950770	573.623768	3491.507166	0.055470	111.885816
+min	5.000000	3063.000000	431.000000	0.451000	344.000000
+25%	7.000000	3739.000000	3110.250000	0.529750	509.500000
+50%	7.500000	4298.000000	4735.500000	0.564500	568.500000
+75%	8.125000	4578.750000	7156.000000	0.595250	632.750000
+max	10.000000	5342.000000	17782.000000	0.724000	968.000000
+df.hist()
+array([[<Axes: title={'center': 'Petrol_tax'}>,
+        <Axes: title={'center': 'Average_income'}>],
+       [<Axes: title={'center': 'Paved_Highways'}>,
+        <Axes: title={'center': 'Population_Driver_licence(%)'}>],
+       [<Axes: title={'center': 'Petrol_Consumption'}>, <Axes: >]],
+      dtype=object)
+
+df.columns
+Index(['Petrol_tax', 'Average_income', 'Paved_Highways',
+       'Population_Driver_licence(%)', 'Petrol_Consumption'],
+      dtype='object')
+sns.pairplot(df)
+<seaborn.axisgrid.PairGrid at 0x2571929ed40>
+
+correlation =df.corr()
+#annote = true ,displays the correlation values 
+sns.heatmap(correlation, annot = True).set(title = 'Heatmap of Consumption Data - Pearson Correlation');
+
+df.plot(x='Average_income', y = 'Petrol_Consumption', style = 'o')
+plt.title('Petrol Consumption vc Average Income')
+plt.xlabel('Average Income')
+plt.ylabel('Petrol Consumption')
+plt.show()
+
+df.plot(x='Paved_Highways', y = 'Petrol_Consumption', style = 'o')
+plt.title('Highways vsAverage Income')
+plt.xlabel('Highways')
+plt.ylabel('Petrol Consumption')
+plt.show()
+
+X=df[['Average_income','Paved_Highways','Petrol_tax']]
+y=df['Petrol_Consumption']
+X.head(2)
+Average_income	Paved_Highways	Petrol_tax
+0	3571	1976	9.0
+1	4092	1250	9.0
+#OLS Regression from statsmodels
+
+model=sm.OLS(y,X).fit()
+model.summary()
+OLS Regression Results
+Dep. Variable:	Petrol_Consumption	R-squared (uncentered):	0.943
+Model:	OLS	Adj. R-squared (uncentered):	0.940
+Method:	Least Squares	F-statistic:	249.9
+Date:	Thu, 18 May 2023	Prob (F-statistic):	4.64e-28
+Time:	10:25:23	Log-Likelihood:	-305.22
+No. Observations:	48	AIC:	616.4
+Df Residuals:	45	BIC:	622.1
+Df Model:	3		
+Covariance Type:	nonrobust		
+coef	std err	t	P>|t|	[0.025	0.975]
+Average_income	0.0578	0.031	1.871	0.068	-0.004	0.120
+Paved_Highways	0.0091	0.006	1.478	0.146	-0.003	0.021
+Petrol_tax	35.5899	15.567	2.286	0.027	4.236	66.944
+Omnibus:	3.633	Durbin-Watson:	1.005
+Prob(Omnibus):	0.163	Jarque-Bera (JB):	2.817
+Skew:	0.302	Prob(JB):	0.245
+Kurtosis:	4.021	Cond. No.	5.66e+03
+
+
+Notes:
+[1] R² is computed without centering (uncentered) since the model does not contain a constant.
+[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[3] The condition number is large, 5.66e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.
+#ADD CONSTANT
+X = sm.add_constant(X)
+model =sm.OLS(y,X).fit()
+model.summary()
+OLS Regression Results
+Dep. Variable:	Petrol_Consumption	R-squared:	0.318
+Model:	OLS	Adj. R-squared:	0.271
+Method:	Least Squares	F-statistic:	6.831
+Date:	Thu, 18 May 2023	Prob (F-statistic):	0.000704
+Time:	10:25:23	Log-Likelihood:	-284.87
+No. Observations:	48	AIC:	577.7
+Df Residuals:	44	BIC:	585.2
+Df Model:	3		
+Covariance Type:	nonrobust		
+coef	std err	t	P>|t|	[0.025	0.975]
+const	1348.2616	175.873	7.666	0.000	993.813	1702.711
+Average_income	-0.0435	0.024	-1.789	0.081	-0.093	0.006
+Paved_Highways	-0.0090	0.005	-1.916	0.062	-0.018	0.000
+Petrol_tax	-69.9983	17.199	-4.070	0.000	-104.661	-35.335
+Omnibus:	18.583	Durbin-Watson:	1.464
+Prob(Omnibus):	0.000	Jarque-Bera (JB):	30.839
+Skew:	1.146	Prob(JB):	2.01e-07
+Kurtosis:	6.188	Cond. No.	9.69e+04
+
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 9.69e+04. This might indicate that there are
+strong multicollinearity or other numerical problems.
+sns.regplot(x ='Average_income', y= 'Petrol_Consumption', data = df)
+sns.lmplot(x = 'Paved_Highways', y = 'Petrol_Consumption' , data =df)
+sns.lmplot(x = 'Petrol_tax', y ='Petrol_Consumption', data = df)
+<seaborn.axisgrid.FacetGrid at 0x2571acb60b0>
+
+
+
+#Residuals plot
+sns.histplot(model.resid)
+<Axes: ylabel='Count'>
+
+#q-q plot
+sm.qqplot(model.resid,line='s')
+plt.title('NORMAL Q-Q PLOT')
+plt.show()
+
+#Residuals vs Fitted values
+
+plt.scatter(model.fittedvalues, model.resid)
+plt.xlabel('Fitted Values')
+plt.ylabel('Residuals')
+plt.title('Residuals vs Fitted Values')
+plt.show()
+
+actual_fitted =pd.DataFrame({'Actual': y, 'Fitted' : model.predict(X)})
+actual_fitted
+Actual	Fitted
+0	541	545.014951
+1	524	528.848193
+2	561	535.715255
+3	414	590.074455
+4	410	592.834522
+5	457	403.668929
+6	344	450.027829
+7	467	545.840392
+8	464	517.566044
+9	498	585.362545
+10	580	543.702757
+11	471	472.608453
+12	525	586.247024
+13	508	615.955635
+14	566	596.327431
+15	635	577.344477
+16	603	598.679334
+17	714	653.914807
+18	865	599.763474
+19	640	510.243202
+20	649	587.880912
+21	540	565.866181
+22	464	483.020827
+23	547	490.752477
+24	460	530.558907
+25	566	513.598901
+26	577	589.619775
+27	631	574.389781
+28	574	552.219657
+29	534	519.687093
+30	571	637.727926
+31	554	653.891060
+32	577	596.279621
+33	628	640.062509
+34	487	603.240163
+35	644	651.726886
+36	640	662.375868
+37	704	631.207348
+38	648	565.566659
+39	968	633.976366
+40	587	622.853585
+41	699	663.262460
+42	632	638.361535
+43	591	671.729752
+44	782	680.487942
+45	510	487.942547
+46	610	634.511199
+47	524	552.462352
+#Hetroscedasticity
+from statsmodels.stats.diagnostic import het_breuschpagan
+bp_test = het_breuschpagan(model.resid,X)
+bp_test
+(5.00162328108064,
+ 0.17167831826396587,
+ 1.7060444382676454,
+ 0.17959574085599903)
+p_value = bp_test[1]
+p_value
+
+#no evidence for hetroscedasticity
+0.17167831826396587
+#MULTICOLLINEARITY
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+vif =pd.DataFrame()
+vif['Feature'] = X.columns
+vif['VIF'] = [variance_inflation_factor(X.values,i) for i in range(X.shape[1])]
+vif
+
+#VIF >1 - MULTICOLLINEARITY
+Feature	VIF
+0	const	162.745947
+1	Average_income	1.004613
+2	Paved_Highways	1.380918
+3	Petrol_tax	1.377664
+#AUTOCORRELATION
+from statsmodels.stats.stattools import durbin_watson
+dw_statistic =durbin_watson(model.resid)
+dw_statistic
+
+#DW < 2 = no autocorrelation
+1.464238168020933
+#NORMALITY
+from statsmodels.stats.stattools import jarque_bera
+jb_test =jarque_bera(model.resid)
+jb_test[1]
+#non normal
+2.010661159946563e-07
+pip install Stargazer
+Requirement already satisfied: Stargazer in c:\users\user\anaconda\lib\site-packages (0.0.5)
+Note: you may need to restart the kernel to use updated packages.
+from stargazer.stargazer import Stargazer
+from IPython.core.display import HTML
+stargazer = Stargazer([model])
+HTML(stargazer.render_html())
+Dependent variable:Petrol_Consumption
+(1)
+Average_income	-0.044*
+(0.024)
+Paved_Highways	-0.009*
+(0.005)
+Petrol_tax	-69.998***
+(17.199)
+const	1348.262***
+(175.873)
+Observations	48
+R2	0.318
+Adjusted R2	0.271
+Residual Std. Error	95.514 (df=44)
+F Statistic	6.831*** (df=3; 44)
+Note:	*p<0.1; **p<0.05; ***p<0.01
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+y = df ['Petrol_Consumption']
+X = df[['Average_income', 'Paved_Highways',
+       'Population_Driver_licence(%)','Petrol_tax']]
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size =0.3,random_state = 42)
+#FIT  the linear regression model
+model1 = LinearRegression()
+model1.fit(X_train, y_train)
+
+LinearRegression
+LinearRegression()
+model1.intercept_
+513.1398382048365
+model1.coef_
+array([-4.53815410e-02, -4.95597538e-03,  1.03711642e+03, -3.99336011e+01])
+coefficients_df = pd.DataFrame(data= model1.coef_,
+                              index = X.columns,
+                              columns = ['Coefficient value'])
+coefficients_df
+Coefficient value
+Average_income	-0.045382
+Paved_Highways	-0.004956
+Population_Driver_licence(%)	1037.116419
+Petrol_tax	-39.933601
+# MAKING PREDICTIONS 
+# Checking if our models is making mistakes
+#Predict the petrol consumption using test data and then look at metrics to tell how well our
+y_pred = model1.predict(X_test)
+results = pd.DataFrame({'Actual': y_test, 'Predict':y_pred})
+
+results
+Actual	Predict
+27	631	594.684737
+40	587	657.946263
+26	577	578.777962
+43	591	577.565848
+24	460	524.600507
+37	704	632.859084
+12	525	575.961662
+19	640	649.045363
+4	410	556.092937
+25	566	525.542987
+8	464	497.986501
+3	414	529.612813
+6	344	361.208602
+39	968	714.010984
+33	628	608.171103
+#Evaluating the multivariate model
+# Understand if predicted values are too far from our actual values
+plt.scatter(y_test, y_pred)
+<matplotlib.collections.PathCollection at 0x25721337010>
+
+plt.hist(y_test - y_pred)
+(array([2., 1., 3., 4., 3., 1., 0., 0., 0., 1.]),
+ array([-146.09293684, -106.08474159,  -66.07654634,  -26.06835109,
+          13.93984416,   53.94803941,   93.95623467,  133.96442992,
+         173.97262517,  213.98082042,  253.98901567]),
+ <BarContainer object of 10 artists>)
+
+from sklearn.metrics import mean_absolute_error,mean_squared_error
+mae1 = mean_absolute_error(y_test, y_pred)
+mae1
+63.02652446557374
+mse = mean_squared_error(y_test,y_pred)
+mse
+8076.669020354641
+rmse =np.sqrt(mse)
+rmse
+89.87028997591274
+# MEAN ABSOLUTE ERROR (MAE) - mean of absolute error value of difference between predicted values and actual values smaller/closer to actual value
+# SQUARED ERROR (MSE) - squares the absolute values of error smaller/closer to 0 is better
+# ROOT MEAN SQUARED (RMSE) - same units of data small/closer  to 0 is the better
+model1
